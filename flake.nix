@@ -10,6 +10,7 @@
     # non-system suffixed items should go here
     nixosModules = {
       nixos-firehol = import ./nixos-firehol.nix ;
-    }; # export single module
+    };
+    nixosModule = self.nixosModules.nixos-firehol # export single module
   };
 }
