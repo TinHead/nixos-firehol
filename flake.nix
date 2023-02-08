@@ -11,6 +11,6 @@
     nixosModules = {
       nixos-firehol = import ./nixos-firehol.nix ;
     };
-    nixosModule = self.nixosModules.nixos-firehol # export single module
+    nixosModule = self.nixosModules.nixos-firehol; # export single module
   };
 }
