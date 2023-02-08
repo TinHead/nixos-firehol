@@ -8,6 +8,8 @@
   outputs = { self, nixpkgs, ... }:
   {
     # non-system suffixed items should go here
-    nixosModules.default = import ./nixos-firehol.nix; # export single module
+    nixosModules = {
+      nixos-firehol = import ./nixos-firehol.nix ;
+    }; # export single module
   };
 }
