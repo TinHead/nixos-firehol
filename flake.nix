@@ -2,7 +2,7 @@
   description = "firehole-nixos flake";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-22.11";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-22.11";
   };
 
   outputs = { self, nixpkgs, ... }:
