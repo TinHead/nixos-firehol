@@ -126,7 +126,7 @@ let
     ''
     ${ concatMapStrings ({ name, myname, src , dst, policy, rules }:
       ''
-        interface4 ${name} ${myname} ${}
+        interface4 ${name} ${myname} ${
             (if (src.ip!="") then 
               (if src.deny==true then '' src not ${src.ip}'' else '' src ${src.ip}'')
             else (''''))}
