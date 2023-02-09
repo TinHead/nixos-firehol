@@ -56,7 +56,6 @@ With flakes add it to flake.nix:
           firehol-nixos.nixosModules.nixos-firehol
         ];
       };
-      # Also see the non-Flakes hive.nix example above.
   };
 }
 ```
