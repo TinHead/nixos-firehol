@@ -1,9 +1,21 @@
-{ config, lib, pkgs, ... }:
-with lib;
-let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+with lib; let
   cfg = config.services.firehol;
-  fireholInterfaces = list: builtins.listToAttrs (lib.forEach list (intf: { name = intf.name; value = intf; }));
-  fireholInterface = { name, config, ...}: {
+  fireholInterfaces = list:
+    builtins.listToAttrs (lib.forEach list (intf: {
+      name = intf.name;
+      value = intf;
+    }));
+  fireholInterface = {
+    name,
+    config,
+    ...
+  }: {
     options = {
       name = mkOption {
         type = types.str;
@@ -22,52 +34,62 @@ let
       # };
       src = mkOption {
         default = {};
-        type = with types; submodule {
-          options = {
-            ip = mkOption {
-              type = str;
-              default = "";
-            };
-            deny = mkOption {
-              type = bool;
-              default = false;
+        type = with types;
+          submodule {
+            options = {
+              ip = mkOption {
+                type = str;
+                default = "";
+              };
+              deny = mkOption {
+                type = bool;
+                default = false;
+              };
             };
           };
-        };
       };
       dst = mkOption {
         default = {};
-        type = with types; submodule {
-          options = {
-            ip = mkOption {
-              type = str;
-              default = "";
-            };
-            deny = mkOption {
-              type = bool;
-              default = false;
+        type = with types;
+          submodule {
+            options = {
+              ip = mkOption {
+                type = str;
+                default = "";
+              };
+              deny = mkOption {
+                type = bool;
+                default = false;
+              };
             };
           };
-        };
       };
       # dst = mkOption {
       #   type = types.str;
       #   default = "";
       #   description = "Destination IP ";
       # };
-      policy = mkOption { 
-        type = types.enum ["accept" "reject" "drop"]; 
+      policy = mkOption {
+        type = types.enum ["accept" "reject" "drop"];
         default = "drop";
         description = "Default policy on this interface";
       };
       rules = mkOption {
         type = types.listOf types.str;
-        default = [ "client all accept" ];
+        default = ["client all accept"];
       };
-      };
-   };
-  fireholRouters = list: builtins.listToAttrs (lib.forEach list (router: { name = router.name; value = router; }));
-  fireholRouter = { name, config, ...}: {
+    };
+  };
+  fireholRouters = list:
+    builtins.listToAttrs (lib.forEach list (router: {
+      name = router.name;
+      value = router;
+    }));
+  fireholRouter = {
+    name,
+    config,
+    ...
+  }: {
     options = {
       name = mkOption {
         type = types.str;
@@ -86,70 +108,112 @@ let
       };
       src = mkOption {
         default = {};
-        type = with types; submodule {
-          options = {
-            ip = mkOption {
-              type = str;
-              default = "";
-            };
-            deny = mkOption {
-              type = bool;
-              default = false;
+        type = with types;
+          submodule {
+            options = {
+              ip = mkOption {
+                type = str;
+                default = "";
+              };
+              deny = mkOption {
+                type = bool;
+                default = false;
+              };
             };
           };
-        };
       };
       dst = mkOption {
         default = {};
-        type = with types; submodule {
-          options = {
-            ip = mkOption {
-              type = str;
-              default = "";
-            };
-            deny = mkOption {
-              type = bool;
-              default = false;
+        type = with types;
+          submodule {
+            options = {
+              ip = mkOption {
+                type = str;
+                default = "";
+              };
+              deny = mkOption {
+                type = bool;
+                default = false;
+              };
             };
           };
-        };
       };
-      # list of rules to apply -- could not find a better way to implement 
+      # list of rules to apply -- could not find a better way to implement
       rules = mkOption {
         type = types.listOf types.str;
-        default = [ "client all accept" ];
+        default = ["client all accept"];
       };
-    };  
-   };
+    };
+  };
   #generate the configuration
-  confFile = 
-    ''
-    ${ concatMapStrings ({ name, myname, src , dst, policy, rules }:
-      ''
-        interface4 ${name} ${myname} ${
-            (if (src.ip!="") then 
-              (if src.deny==true then '' src not ${src.ip}'' else '' src ${src.ip}'')
-            else (''''))}
-            ${if (dst.ip!="") then 
-              (if dst.deny==true then '' dst not ${dst.ip}'' else '' dst ${dst.ip}'')
-            else ('''')}
-            policy ${policy}
-            ${ concatStringsSep "\n    " rules }
-      '')(attrValues cfg.interfaces)}
-    ${ concatMapStrings ({ name, inface , outface, src, dst, rules }:
-      ''
-        router4 ${name} inface ${inface} outface ${outface} ${ 
-            (if (src.ip!="") then 
-              (if src.deny==true then '' src not ${src.ip}'' else '' src ${src.ip}'')
-            else (''''))}
-            ${if (dst.ip!="") then 
-              (if dst.deny==true then '' dst not ${dst.ip}'' else '' dst ${dst.ip}'')
-            else ('''')}
-            ${ concatStringsSep "\n    " rules }
-    '')(attrValues cfg.routers)}
-     ''; 
-in
-{
+  confFile = ''
+    ${concatMapStrings ({
+      name,
+      myname,
+      src,
+      dst,
+      policy,
+      rules,
+    }: ''
+      interface4 ${name} ${myname} ${
+        (
+          if (src.ip != "")
+          then
+            (
+              if src.deny == true
+              then ''src not ${src.ip}''
+              else ''src ${src.ip}''
+            )
+          else ''''
+        )
+      }
+          ${
+        if (dst.ip != "")
+        then
+          (
+            if dst.deny == true
+            then ''dst not ${dst.ip}''
+            else ''dst ${dst.ip}''
+          )
+        else ''''
+      }
+          policy ${policy}
+          ${concatStringsSep "\n    " rules}
+    '') (attrValues cfg.interfaces)}
+    ${concatMapStrings ({
+      name,
+      inface,
+      outface,
+      src,
+      dst,
+      rules,
+    }: ''
+      router4 ${name} inface ${inface} outface ${outface} ${
+        (
+          if (src.ip != "")
+          then
+            (
+              if src.deny == true
+              then ''src not ${src.ip}''
+              else ''src ${src.ip}''
+            )
+          else ''''
+        )
+      }
+          ${
+        if (dst.ip != "")
+        then
+          (
+            if dst.deny == true
+            then ''dst not ${dst.ip}''
+            else ''dst ${dst.ip}''
+          )
+        else ''''
+      }
+          ${concatStringsSep "\n    " rules}
+    '') (attrValues cfg.routers)}
+  '';
+in {
   #implementation
   options = {
     services.firehol = {
@@ -157,7 +221,7 @@ in
       interfaces = mkOption {
         default = {};
         type = with types; coercedTo (listOf attrs) fireholInterfaces (attrsOf (types.submodule fireholInterface));
-        description = lib.mdDoc '' List of interfaces to use '';
+        description = lib.mdDoc ''List of interfaces to use '';
         example = {
           "eth1" = {
             myname = "lan";
@@ -167,31 +231,30 @@ in
       routers = mkOption {
         default = {};
         type = with types; coercedTo (listOf attrs) fireholRouters (attrsOf (types.submodule fireholRouter));
-        description = lib.mdDoc '' List of Routers to create '';
+        description = lib.mdDoc ''List of Routers to create '';
         example = {
           "lan2wan" = {
           };
         };
-
       };
     };
   };
   # systemd service
   config = mkIf cfg.enable {
-      environment.etc."firehol/firehol.conf".text = confFile;
-      systemd.services.firehol = {
-        description = "FireHol a firewall for humans";
-        after = [ "systemd-modules-load.service" "local-fs.target"  ];
-        wants = [ "network-pre.target" "systemd-modules-load.service" "local-fs.target" ];
-        before = [ "shutdown.target" ];
-        conflicts = [ "shutdown.target" ];
-        stopIfChanged = true;
-        serviceConfig = {
-          Type = "oneshot";
-          RemainAfterExit = true;
-          ExecStart = "${pkgs.firehol}/bin/firehol start";
-          ExecStop = "${pkgs.firehol}/bin/fireqos stop";
-          ExecReload = "${pkgs.firehol}/bin/firehol start";
+    environment.etc."firehol/firehol.conf".text = confFile;
+    systemd.services.firehol = {
+      description = "FireHol a firewall for humans";
+      after = ["systemd-modules-load.service" "local-fs.target"];
+      wants = ["network-pre.target" "systemd-modules-load.service" "local-fs.target"];
+      before = ["shutdown.target"];
+      conflicts = ["shutdown.target"];
+      stopIfChanged = true;
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+        ExecStart = "${pkgs.firehol}/bin/firehol start";
+        ExecStop = "${pkgs.firehol}/bin/fireqos stop";
+        ExecReload = "${pkgs.firehol}/bin/firehol start";
       };
     };
   };
