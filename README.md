@@ -1,5 +1,7 @@
 # FireHOL NixOS module
 
+### Module documentation here https://tinhead.github.io/nixos-firehol/nixos-firehol.html
+
 ## Some background
 
 At the company I work for Essensys (https://essensys.ro), we have a fairly complicated Shorewall based firewall setup which is getting harder and harder to manage by editing configuration files.
