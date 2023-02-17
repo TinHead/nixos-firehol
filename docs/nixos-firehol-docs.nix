@@ -1,10 +1,6 @@
 { pkgs, ...}:
 let
-  url = "https://github.com/TinHead/nixos-firehol.git";
-  src =  builtins.fetchGit {
-    inherit url;
-    ref = "main";
-  };
+  src =  ../.;
   pkg = pkgs.writeText "nixos-firehol.nix"
     (builtins.replaceStrings
       ["lib.mdDoc "]
@@ -19,5 +15,4 @@ in
     ---
     - [NixOS-FireHOL](./nixos-firehol.md)
   '';
-#  about.sources = "- [NixOS-FireHOL](https://github.com/TinHead/nixos-firehol)";
 }
