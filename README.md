@@ -1,5 +1,6 @@
 # FireHOL NixOS module
 
+
 ### Module documentation here https://tinhead.github.io/nixos-firehol/nixos-firehol.html
 
 ## Some background
