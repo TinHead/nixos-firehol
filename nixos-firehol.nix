@@ -27,21 +27,19 @@ with lib; let
         default = "lan";
         description = "Interface custom name for readability";
       };
-      # src = mkOption {
-      #   type = types.str;
-      #   default = "";
-      #   description = "Source IP";
-      # };
       src = mkOption {
         default = {};
+        description = "Source IP address";
         type = with types;
           submodule {
             options = {
               ip = mkOption {
+                description = "IP address";
                 type = str;
                 default = "";
               };
               deny = mkOption {
+                description = "Set to true to negate IP (add not in front)";
                 type = bool;
                 default = false;
               };
@@ -50,25 +48,23 @@ with lib; let
       };
       dst = mkOption {
         default = {};
+        description = "Destination IP address";
         type = with types;
           submodule {
             options = {
               ip = mkOption {
+                descritption = "IP address";
                 type = str;
                 default = "";
               };
               deny = mkOption {
+                description = "Set to true to negate IP (add not in front)";
                 type = bool;
                 default = false;
               };
             };
           };
       };
-      # dst = mkOption {
-      #   type = types.str;
-      #   default = "";
-      #   description = "Destination IP ";
-      # };
       policy = mkOption {
         type = types.enum ["accept" "reject" "drop"];
         default = "drop";
@@ -107,15 +103,18 @@ with lib; let
         description = "Output interface";
       };
       src = mkOption {
+        description = "Source IP address";
         default = {};
         type = with types;
           submodule {
             options = {
               ip = mkOption {
+                description = "IP address";
                 type = str;
                 default = "";
               };
               deny = mkOption {
+                description = "Set to true to negate IP (add not in front)";
                 type = bool;
                 default = false;
               };
@@ -128,10 +127,12 @@ with lib; let
           submodule {
             options = {
               ip = mkOption {
+                description = "IP address";
                 type = str;
                 default = "";
               };
               deny = mkOption {
+                description = "Set to true to negate IP (add not in front)";
                 type = bool;
                 default = false;
               };
@@ -140,8 +141,9 @@ with lib; let
       };
       # list of rules to apply -- could not find a better way to implement
       rules = mkOption {
+        description = "List of router rules to apply";
         type = types.listOf types.str;
-        default = ["client all accept"];
+        default = ["router all accept"];
       };
     };
   };
