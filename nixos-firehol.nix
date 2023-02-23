@@ -53,7 +53,7 @@ with lib; let
           submodule {
             options = {
               ip = mkOption {
-                descritption = "IP address";
+                description = "IP address";
                 type = str;
                 default = "";
               };
