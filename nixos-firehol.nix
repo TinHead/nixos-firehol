@@ -250,7 +250,7 @@ in {
       wants = ["network-pre.target" "systemd-modules-load.service" "local-fs.target"];
       before = ["shutdown.target"];
       conflicts = ["shutdown.target"];
-      stopIfChanged = true;
+      restartIfChanged = true;
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
